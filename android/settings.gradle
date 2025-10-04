@@ -1,1 +1,42 @@
-rootProject.name = 'motion_sensors'
+// motion_sensors/android/settings.gradle
+
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+
+    // Read Flutter SDK path from local.properties
+    def localProperties = new Properties()
+    def localPropsFile = new File(rootDir, "local.properties")
+    if (localPropsFile.exists()) {
+        localPropsFile.withReader("UTF-8") { reader -> localProperties.load(reader) }
+    }
+    def flutterSdkPath = localProperties.getProperty("flutter.sdk")
+    if (flutterSdkPath == null) {
+        throw new GradleException("Flutter SDK not found. Define flutter.sdk in android/local.properties")
+    }
+
+    // Make Flutter's Gradle plugin resolvable without a version in the module
+    includeBuild("${flutterSdkPath}/packages/flutter_tools/gradle")
+
+    // Pin plugin versions for module `plugins {}` blocks
+    plugins {
+        id("com.android.library") version "8.7.2"
+        id("org.jetbrains.kotlin.android") version "2.0.21"
+        // dev.flutter.flutter-gradle-plugin version is provided by includeBuild above
+    }
+}
+
+dependencyResolutionManagement {
+    // Prefer settings-level repos but allow plugins to add their own maven if needed
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "motion_sensors"
+// No includes needed; this project *is* the library.
